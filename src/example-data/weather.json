@@ -1,0 +1,15 @@
+{
+  "coord": {"lon": -94.6169, "lat": 38.9667},
+  "weather": [{"id": 803, "main": "Clouds", "description": "broken clouds", "icon": "04d"}],
+  "base": "stations",
+  "main": {"temp": 54.1, "feels_like": 51.51, "temp_min": 50.7, "temp_max": 58.28, "pressure": 1015, "humidity": 49},
+  "visibility": 10000,
+  "wind": {"speed": 1.99, "deg": 341, "gust": 5.99},
+  "clouds": {"all": 79},
+  "dt": 1637517633,
+  "sys": {"type": 2, "id": 2019408, "country": "US", "sunrise": 1637500104, "sunset": 1637535649},
+  "timezone": -21600,
+  "id": 4274317,
+  "name": "Leawood",
+  "cod": 200
+}

@@ -1,0 +1,144 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+
+// Variables 
+$color_gray: rgb(150, 150, 150);
+
+// DOM Elements
+
+body {
+    background-color: #000;
+    font-family: 'Share Tech Mono', monospace;
+    color: rgb(150, 150, 150);
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+p {
+    margin: 0;
+    padding: 0;
+    color: $color_gray;
+    letter-spacing: 0.1em;
+}
+
+
+// Helper Classes
+
+.text-center {
+    text-align: center !important;
+}
+
+.font-s {
+    font-size: 1.5rem;
+}
+
+.font-m {
+    font-size: 1.75rem;
+}
+
+.font-l {
+    font-size: 6rem;
+}
+
+.font-xl {
+    letter-spacing: 0.05em;
+    font-size: 8rem;
+}
+
+
+// Clock Page
+
+#app {
+    height: 98%;
+    width: 98%;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.clock-container {
+    height: 98%;
+    width: 98%;
+    margin: 10px auto;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    
+    .row-1, .row-2, .row-3 {
+        display: flex;
+        width: 100%;
+
+        .row-item {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            text-align: center;
+        }
+    }
+
+    .row-1 {
+        flex-shrink: 1;
+        justify-content: flex-start;
+    }
+
+    .row-2 {
+        flex-grow: 2;
+        justify-content: center;
+    }
+
+    .row-3 {
+        flex-grow: 2;
+        justify-content: flex-start;
+
+        .row-item {
+            align-content: flex-start;
+            
+            .current-temp {
+                padding-left: 4rem;
+            }
+        }
+    }
+
+    .row-4 {
+        flex-grow: 1;
+
+        .forecast-container {
+            display: flex;
+            justify-content: space-between;
+            align-content: flex-end;
+            height: 100%;
+            width: 100%;
+            text-align: center;
+
+            .forecast-day {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                text-align: center;
+
+                .forecast-temps {
+                    text-align: center;
+
+                    .temp-high {
+                        border-right: 1px solid $color_gray;
+                        padding-right: 10px;
+                    }
+
+                    .temp-low {
+                        border-left: 1px solid $color_gray;
+                        padding-left: 10px;
+                    }
+                }
+    
+                .forecast-date {
+                    text-align: center;
+                }
+            }
+        }
+    }
+}
