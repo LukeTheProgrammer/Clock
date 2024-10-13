@@ -1,0 +1,94 @@
+{
+    "@context": [
+        "https://geojson.org/geojson-ld/geojson-context.jsonld",
+        {
+            "@version": "1.1",
+            "wx": "https://api.weather.gov/ontology#",
+            "s": "https://schema.org/",
+            "geo": "http://www.opengis.net/ont/geosparql#",
+            "unit": "http://codes.wmo.int/common/unit/",
+            "@vocab": "https://api.weather.gov/ontology#",
+            "geometry": {
+                "@id": "s:GeoCoordinates",
+                "@type": "geo:wktLiteral"
+            },
+            "city": "s:addressLocality",
+            "state": "s:addressRegion",
+            "distance": {
+                "@id": "s:Distance",
+                "@type": "s:QuantitativeValue"
+            },
+            "bearing": {
+                "@type": "s:QuantitativeValue"
+            },
+            "value": {
+                "@id": "s:value"
+            },
+            "unitCode": {
+                "@id": "s:unitCode",
+                "@type": "@id"
+            },
+            "forecastOffice": {
+                "@type": "@id"
+            },
+            "forecastGridData": {
+                "@type": "@id"
+            },
+            "publicZone": {
+                "@type": "@id"
+            },
+            "county": {
+                "@type": "@id"
+            }
+        }
+    ],
+    "id": "https://api.weather.gov/points/38.9124,-94.6267",
+    "type": "Feature",
+    "geometry": {
+        "type": "Point",
+        "coordinates": [
+            -94.6267,
+            38.912399999999998
+        ]
+    },
+    "properties": {
+        "@id": "https://api.weather.gov/points/38.9124,-94.6267",
+        "@type": "wx:Point",
+        "cwa": "EAX",
+        "forecastOffice": "https://api.weather.gov/offices/EAX",
+        "gridId": "EAX",
+        "gridX": 42,
+        "gridY": 42,
+        "forecast": "https://api.weather.gov/gridpoints/EAX/42,42/forecast",
+        "forecastHourly": "https://api.weather.gov/gridpoints/EAX/42,42/forecast/hourly",
+        "forecastGridData": "https://api.weather.gov/gridpoints/EAX/42,42",
+        "observationStations": "https://api.weather.gov/gridpoints/EAX/42,42/stations",
+        "relativeLocation": {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -94.625240000000005,
+                    38.907263
+                ]
+            },
+            "properties": {
+                "city": "Leawood",
+                "state": "KS",
+                "distance": {
+                    "unitCode": "wmoUnit:m",
+                    "value": 585.01128961401002
+                },
+                "bearing": {
+                    "unitCode": "wmoUnit:degree_(angle)",
+                    "value": 347
+                }
+            }
+        },
+        "forecastZone": "https://api.weather.gov/zones/forecast/KSZ105",
+        "county": "https://api.weather.gov/zones/county/KSC091",
+        "fireWeatherZone": "https://api.weather.gov/zones/fire/KSZ105",
+        "timeZone": "America/Chicago",
+        "radarStation": "KEAX"
+    }
+}

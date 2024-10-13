@@ -10,6 +10,7 @@
     "help": "vue-cli-service build --help"
   },
   "dependencies": {
+    "@formkit/tempo": "^0.1.2",
     "axios": "^0.24.0",
     "core-js": "^3.6.5",
     "vue": "^3.0.0"
@@ -24,6 +25,7 @@
     "eslint-plugin-vue": "^7.0.0",
     "fibers": "^5.0.0",
     "html-loader": "^3.0.1",
+    "prettier": "3.3.3",
     "sass": "^1.43.4",
     "sass-loader": "^10.2.0"
   },

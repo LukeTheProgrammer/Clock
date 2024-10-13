@@ -1,8 +1,7 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 
-
-// Variables 
+// Variables
 $color_gray: rgb(150, 150, 150);
 
 // DOM Elements
@@ -23,6 +22,7 @@ p {
     padding: 0;
     color: $color_gray;
     letter-spacing: 0.1em;
+    line-height: 80%;
 }
 
 
@@ -40,13 +40,17 @@ p {
     font-size: 1.75rem;
 }
 
+.font-ml {
+    font-size: 3.5rem;
+}
+
 .font-l {
     font-size: 6rem;
 }
 
 .font-xl {
     letter-spacing: 0.05em;
-    font-size: 8rem;
+    font-size: 10rem;
 }
 
 
@@ -54,7 +58,9 @@ p {
 
 #app {
     height: 98%;
+    max-height: 98%;
     width: 98%;
+    max-width: 98%;
     margin: 0 auto;
     overflow: hidden;
 }
@@ -66,7 +72,9 @@ p {
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    
+    // align-items: flex-start;
+    justify-content: space-between;
+
     .row-1, .row-2, .row-3 {
         display: flex;
         width: 100%;
@@ -81,22 +89,25 @@ p {
     }
 
     .row-1 {
-        flex-shrink: 1;
         justify-content: flex-start;
     }
 
     .row-2 {
-        flex-grow: 2;
         justify-content: center;
     }
 
     .row-3 {
-        flex-grow: 2;
         justify-content: flex-start;
 
         .row-item {
             align-content: flex-start;
-            
+
+            .current-high-low {
+                display: flex;
+                flex-direction: column;
+                align-content: space-between;
+            }
+
             .current-temp {
                 padding-left: 4rem;
             }
@@ -104,7 +115,6 @@ p {
     }
 
     .row-4 {
-        flex-grow: 1;
 
         .forecast-container {
             display: flex;
@@ -120,23 +130,31 @@ p {
                 justify-content: center;
                 align-items: center;
                 text-align: center;
+                width: 100%;
+
+                .forecast-date {
+                    text-align: center;
+                    width: 100%;
+                }
 
                 .forecast-temps {
-                    text-align: center;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    width: 70%;
 
                     .temp-high {
-                        border-right: 1px solid $color_gray;
-                        padding-right: 10px;
+                        text-align: left;
+                    }
+
+                    .temp-pipe {
+                        text-align: center;
+                        font-weight: bold;
                     }
 
                     .temp-low {
-                        border-left: 1px solid $color_gray;
-                        padding-left: 10px;
+                        text-align: right;
                     }
-                }
-    
-                .forecast-date {
-                    text-align: center;
                 }
             }
         }
