@@ -1,18 +1,9 @@
-<template>
-  <ClockPage/>
-</template>
-
-<script>
-import ClockPage from './components/ClockPage.vue'
-
-export default {
-  name: 'App',
-  components: {
-    ClockPage
-  }
-}
+<script setup>
+import { RouterView } from 'vue-router'
 </script>
 
-<style>
+<template>
+  <RouterView />
+</template>
 
-</style>
+<style scoped></style>

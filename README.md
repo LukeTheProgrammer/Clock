@@ -1,24 +1,16 @@
-# hello-world
+# Bootstrap w/ Vite
 
-## Project setup
-```
+Include [Bootstrap](https://getbootstrap.com)'s source Sass and individual JavaScript plugins with [Vite](https://vitejs.dev/).
+
+## Edit in browser
+
+[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/twbs/examples/tree/main/vite?file=src%2Findex.html)
+
+## How to use
+
+```sh
+git clone https://github.com/twbs/examples.git
+cd examples/vite/
 npm install
+npm start
 ```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
