@@ -1,16 +1,15 @@
-# Bootstrap w/ Vite
+# Clock
 
-Include [Bootstrap](https://getbootstrap.com)'s source Sass and individual JavaScript plugins with [Vite](https://vitejs.dev/).
+I couldn't find a clock that I liked, so I made my own. This gets displayed by a raspberry pi on a 7" screen in "kiosk" mode.
 
-## Edit in browser
+## Vue JS
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/twbs/examples/tree/main/vite?file=src%2Findex.html)
+https://vuejs.org/
 
-## How to use
+## Vite
 
-```sh
-git clone https://github.com/twbs/examples.git
-cd examples/vite/
-npm install
-npm start
-```
+https://vite.dev/
+
+## Bootstrap
+
+https://getbootstrap.com/
