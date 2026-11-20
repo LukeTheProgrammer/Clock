@@ -135,23 +135,33 @@ p {
   }
 
   .current-temp {
-    // A touch smaller than the time, so its degree sign clears the low temp
+    // A touch smaller than the time, so its degree sign clears the right column
     font-size: u(160);
 
-    // The icon and degree sign hang into the gaps either side, so the digits
-    // stay centred under the minutes. Both keep their natural (static)
-    // horizontal spot next to the digits and are shifted out from there.
+    // The degree sign hangs into the gap so the digits stay centred under the minutes
     .current-temp-degree {
       position: absolute;
       top: 0;
     }
+  }
 
-    .current-icon {
-      position: absolute;
-      top: 50%;
-      transform: translate(calc(-100% - #{u(8)}), -50%);
-      font-size: u(56);
-    }
+  // The side columns of the temp row stretch to the row's height (set by the
+  // current temp) and spread their two items over it
+  .temp-range,
+  .current-conditions {
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .current-icon {
+    font-size: u(72);
+  }
+
+  .current-rain .rain-icon {
+    margin-right: 0.1em;
   }
 
   .temp-arrow {

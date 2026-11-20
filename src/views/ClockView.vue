@@ -13,24 +13,35 @@
     <p class="cell time time-colon font-xl">{{ minutes }}</p>
     <p class="cell time time-colon font-xl">{{ seconds }}</p>
 
-    <p class="cell temp-high font-ml" title="Today's high">
-      <svg class="temp-arrow" viewBox="0 0 10 14" aria-hidden="true">
-        <path d="M5 13V2M1.5 5.5L5 2l3.5 3.5" />
-      </svg>{{ todayHigh }}&deg;
-    </p>
+    <!-- Left: today's high and low, spread over the height of the current temp -->
+    <div class="cell temp-range">
+      <p class="temp-high font-ml" title="Today's high">
+        <svg class="temp-arrow" viewBox="0 0 10 14" aria-hidden="true">
+          <path d="M5 13V2M1.5 5.5L5 2l3.5 3.5" />
+        </svg>{{ todayHigh }}&deg;
+      </p>
+      <p class="temp-low font-ml" title="Today's low">
+        <svg class="temp-arrow" viewBox="0 0 10 14" aria-hidden="true">
+          <path d="M5 1v11M1.5 8.5L5 12l3.5-3.5" />
+        </svg>{{ todayLow }}&deg;
+      </p>
+    </div>
+
     <p class="cell current-temp font-xl">
-      <!-- The icon and degree sign hang either side of the digits, into the gaps -->
+      <!-- The degree sign hangs into the gap so the digits stay under the minutes -->
+      {{ Math.round(currentTemp) }}<span class="current-temp-degree">&deg;</span>
+    </p>
+
+    <!-- Right: current conditions above the rain chance for the rest of today -->
+    <div class="cell current-conditions">
       <WeatherIcon
-        v-if="currentPeriod"
         class="current-icon"
-        :kind="conditionKind(currentPeriod.shortForecast, currentPeriod.isDaytime)"
-      />{{ Math.round(currentTemp) }}<span class="current-temp-degree">&deg;</span>
-    </p>
-    <p class="cell temp-low font-ml" title="Today's low">
-      <svg class="temp-arrow" viewBox="0 0 10 14" aria-hidden="true">
-        <path d="M5 1v11M1.5 8.5L5 12l3.5-3.5" />
-      </svg>{{ todayLow }}&deg;
-    </p>
+        :kind="conditionKind(currentPeriod?.shortForecast, currentPeriod?.isDaytime ?? true)"
+      />
+      <p class="current-rain font-ml" title="Chance of rain for the rest of today">
+        <WeatherIcon kind="drop" class="rain-icon" />{{ todayRainChance }}%
+      </p>
+    </div>
 
     <!-- An active weather alert takes over the forecast row -->
     <div v-if="topAlert" class="alert-banner" :class="`alert-${topAlert.severity.toLowerCase()}`">
@@ -55,7 +66,7 @@
         </p>
         <p class="forecast-conditions font-m" :title="day.shortForecast">
           <WeatherIcon :kind="day.kind" />
-          <span v-if="day.rainChance >= minRainChance" class="forecast-rain font-s">
+          <span class="forecast-rain font-s">
             <WeatherIcon kind="drop" />{{ day.rainChance }}%
           </span>
         </p>
@@ -105,8 +116,6 @@ export default {
       seconds: '',
       // How many days the forecast row shows (3 lines up with the clock's columns)
       forecastDays: 3,
-      // Only show a forecast day's rain chance at or above this (percent)
-      minRainChance: 20,
       now: Date.now(),
       temp: 0,
       weather: {},
@@ -168,6 +177,13 @@ export default {
       return (
         this.hourly.find((p) => p.start <= this.now && this.now < p.end) ?? this.hourly[0] ?? null
       )
+    },
+
+    // Highest chance of rain from now until midnight
+    todayRainChance() {
+      const today = format(new Date(this.now), 'YYYY-MM-DD')
+      const rest = this.hourly.filter((p) => p.date === today && p.end > this.now)
+      return rest.length ? Math.max(...rest.map((p) => p.rainChance)) : 0
     },
 
     currentTemp() {
