@@ -19,7 +19,7 @@
           <p class="font-ml">{{ todayLow }}&deg;</p>
         </div>
         <p class="current-temp font-xl">{{ Math.round(this.temp) }}&deg;</p>
-        <div>
+        <div v-if="debug">
           <p class="font-m">h: {{ screenHeight }} px</p>
           <p class="font-m">w: {{ screenWidth }} px</p>
         </div>
@@ -58,6 +58,10 @@ export default {
       temp: 0,
       weather: {},
       forecast: {},
+      // Add ?debug to the URL to show the viewport size readout
+      debug: new URLSearchParams(window.location.search).has('debug'),
+      screenWidth: window.innerWidth,
+      screenHeight: window.innerHeight,
       timerId: setInterval(() => this.updateTime(), 1000),
       weatherId: setInterval(() => this.getWeather(), 1000 * 60 * 60),
     }
@@ -95,21 +99,25 @@ export default {
 
       return days
     },
-    screenWidth() {
-      return window.innerWidth
-    },
-    screenHeight() {
-      return window.innerHeight
-    },
   },
 
   mounted() {
     this.updateTime()
     this.getWeather()
     // this.testWeatherData()
+    window.addEventListener('resize', this.updateScreenSize)
+  },
+
+  unmounted() {
+    window.removeEventListener('resize', this.updateScreenSize)
   },
 
   methods: {
+    updateScreenSize() {
+      this.screenWidth = window.innerWidth
+      this.screenHeight = window.innerHeight
+    },
+
     arrayMax(data) {
       return data?.length ? data.reduce((carry, val) => Math.max(carry, val)) : 0
     },

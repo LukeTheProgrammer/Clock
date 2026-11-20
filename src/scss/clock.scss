@@ -3,6 +3,21 @@
 // Variables
 $color_gray: rgb(150, 150, 150);
 
+// Responsive sizing
+//
+// The layout was designed for the 800x480 bedside screen. `--u` is one
+// "design pixel": exactly 1px at 800x480, and it scales up uniformly on
+// bigger screens, limited by whichever axis runs out first (100vw / 800 or
+// 100vh / 480). Size things with u(<px at 800x480>) so the bedside layout
+// stays pixel-identical while a desk monitor gets the same layout, just bigger.
+:root {
+  --u: min(100vw / 800, 100vh / 480);
+}
+
+@function u($px) {
+  @return calc(#{$px} * var(--u));
+}
+
 // DOM Elements
 
 body {
@@ -31,24 +46,24 @@ p {
 }
 
 .font-s {
-  font-size: 1.5rem;
+  font-size: u(24);
 }
 
 .font-m {
-  font-size: 1.75rem;
+  font-size: u(28);
 }
 
 .font-ml {
-  font-size: 3.5rem;
+  font-size: u(56);
 }
 
 .font-l {
-  font-size: 6rem;
+  font-size: u(96);
 }
 
 .font-xl {
   letter-spacing: 0.05em;
-  font-size: 10rem;
+  font-size: u(160);
 }
 
 // Clock Page
@@ -65,7 +80,7 @@ p {
 .clock-container {
   height: 98%;
   width: 98%;
-  margin: 10px auto;
+  margin: u(10) auto;
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -108,7 +123,7 @@ p {
       }
 
       .current-temp {
-        padding-left: 4rem;
+        padding-left: u(64);
       }
     }
   }
