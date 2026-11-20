@@ -195,13 +195,24 @@ p {
       align-items: center;
       width: 100%;
 
+      // Forecast text is 75% of the shared small/medium sizes
+      .font-s {
+        font-size: u(20);
+      }
+
+      .font-m {
+        font-size: u(22);
+      }
+
       .forecast-conditions {
         display: flex;
         align-items: center;
-        justify-content: center;
-        gap: u(10);
-        height: u(30);
-        margin: u(6) 0;
+        // Same width as the temps line below, so the icon sits over the high
+        // and the rain chance over the low
+        justify-content: space-between;
+        width: 70%;
+        height: u(22);
+        margin: u(5) 0;
         line-height: 0.8;
         letter-spacing: 0;
 
