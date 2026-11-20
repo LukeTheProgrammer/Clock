@@ -98,6 +98,17 @@ p {
     white-space: nowrap;
   }
 
+  // Date row: the day of week and day of month hug the month in the middle
+  .date-dow {
+    text-align: right;
+    // Drop the trailing letter-spacing so "Fri" ends flush with the column
+    margin-right: -0.1em;
+  }
+
+  .date-day {
+    text-align: left;
+  }
+
   // Letter-spacing leaves a gap after the last digit, which nudges centred
   // text left. Indenting by the same amount balances it.
   .time,

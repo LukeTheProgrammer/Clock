@@ -5,9 +5,9 @@
     per column under the hours, minutes and seconds.
   -->
   <div class="clock-container">
-    <p class="cell font-l">{{ dayName }}</p>
+    <p class="cell date-dow font-l">{{ dayName }}</p>
     <p class="cell font-l">{{ monthName }}</p>
-    <p class="cell font-l">{{ dayOfMonth }}</p>
+    <p class="cell date-day font-l">{{ dayOfMonth }}</p>
 
     <p class="cell time font-xl">{{ hours }}</p>
     <p class="cell time time-colon font-xl">{{ minutes }}</p>
