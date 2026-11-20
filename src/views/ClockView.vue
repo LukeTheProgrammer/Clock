@@ -13,17 +13,32 @@
     </div>
 
     <div class="row-3">
-      <div class="row-item">
-        <div class="current-high-low">
-          <p class="font-ml">{{ todayHigh }}&deg;</p>
-          <p class="font-ml">{{ todayLow }}&deg;</p>
-        </div>
-        <p class="current-temp font-xl">{{ Math.round(this.temp) }}&deg;</p>
-        <div v-if="debug">
-          <p class="font-m">h: {{ screenHeight }} px</p>
-          <p class="font-m">w: {{ screenWidth }} px</p>
-        </div>
+      <!--
+        Three columns with equal outer widths, so the middle one is centred exactly
+        like the time above it. The current temp's digits then sit under the
+        minute digits; its degree sign hangs outside the column so it doesn't
+        pull the digits off centre.
+      -->
+      <div class="current-weather">
+        <p class="temp-high font-ml" title="Today's high">
+          <svg class="temp-arrow" viewBox="0 0 10 14" aria-hidden="true">
+            <path d="M5 13V2M1.5 5.5L5 2l3.5 3.5" />
+          </svg>{{ todayHigh }}&deg;
+        </p>
+        <p class="current-temp font-xl">
+          {{ Math.round(temp) }}<span class="current-temp-degree">&deg;</span>
+        </p>
+        <p class="temp-low font-ml" title="Today's low">
+          <svg class="temp-arrow" viewBox="0 0 10 14" aria-hidden="true">
+            <path d="M5 1v11M1.5 8.5L5 12l3.5-3.5" />
+          </svg>{{ todayLow }}&deg;
+        </p>
       </div>
+    </div>
+
+    <div v-if="debug" class="debug-readout">
+      <p class="font-m">h: {{ screenHeight }} px</p>
+      <p class="font-m">w: {{ screenWidth }} px</p>
     </div>
 
     <div class="row-4">
