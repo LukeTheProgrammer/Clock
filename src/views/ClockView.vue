@@ -62,7 +62,8 @@
     <div v-else class="forecast-container" :class="{ 'forecast-on-grid': forecastDays === 3 }">
       <div v-for="day in forecastBar" :key="`forecast_day_${day.date}`" class="forecast-day">
         <p class="forecast-date font-s">
-          {{ day.date }}
+          <span>{{ day.dayName }}</span>
+          <span>{{ day.monthDay }}</span>
         </p>
         <p class="forecast-conditions font-m" :title="day.shortForecast">
           <WeatherIcon :kind="day.kind" />
@@ -162,6 +163,8 @@ export default {
 
         days.push({
           date: format(parse(date), 'ddd MM/DD'),
+          dayName: format(parse(date), 'ddd'),
+          monthDay: format(parse(date), 'MM/DD'),
           high: this.arrayMax(this.forecast[date] ?? []),
           low: this.arrayMin(this.forecast[date] ?? []),
           ...summary,

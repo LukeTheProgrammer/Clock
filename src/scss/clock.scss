@@ -204,6 +204,14 @@ p {
         font-size: u(22);
       }
 
+      // Date, conditions and temps all span the same width with their two
+      // parts pushed to the edges, so the left and right items line up
+      .forecast-date {
+        display: flex;
+        justify-content: space-between;
+        width: 70%;
+      }
+
       .forecast-conditions {
         display: flex;
         align-items: center;
