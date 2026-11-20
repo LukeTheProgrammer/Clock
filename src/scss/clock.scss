@@ -34,7 +34,7 @@ body {
 p {
   margin: 0;
   padding: 0;
-  color: $color_gray;
+  color: var(--fg, #{$color_gray});
   letter-spacing: 0.1em;
   line-height: 80%;
 }
@@ -81,6 +81,11 @@ p {
   // Width of the gaps between columns: wide enough for the time's
   // colons, narrow enough to leave the digits room to grow.
   --gutter: #{u(64)};
+  // Text colour; dimmed at night
+  --fg: #{$color_gray};
+
+  color: var(--fg);
+  transition: color 2s;
 
   height: 98%;
   width: 98%;
@@ -133,10 +138,19 @@ p {
     // A touch smaller than the time, so its degree sign clears the low temp
     font-size: u(160);
 
-    // The degree sign hangs into the gap so the digits stay centred under the minutes
+    // The icon and degree sign hang into the gaps either side, so the digits
+    // stay centred under the minutes. Both keep their natural (static)
+    // horizontal spot next to the digits and are shifted out from there.
     .current-temp-degree {
       position: absolute;
       top: 0;
+    }
+
+    .current-icon {
+      position: absolute;
+      top: 50%;
+      transform: translate(calc(-100% - #{u(8)}), -50%);
+      font-size: u(56);
     }
   }
 
@@ -168,6 +182,20 @@ p {
       align-items: center;
       width: 100%;
 
+      .forecast-conditions {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: u(10);
+        height: u(34);
+        line-height: 0.8;
+        letter-spacing: 0;
+
+        .forecast-rain {
+          letter-spacing: 0.05em;
+        }
+      }
+
       .forecast-temps {
         display: flex;
         justify-content: space-between;
@@ -189,4 +217,49 @@ p {
   padding: u(4);
   text-align: right;
   background-color: #000;
+}
+
+// Night dimming (between sunset and sunrise)
+.clock-container.night {
+  --fg: rgb(70, 70, 70);
+}
+
+// Weather alert banner, in place of the forecast row
+.alert-banner {
+  grid-column: 1 / -1;
+  justify-self: center;
+  display: flex;
+  align-items: center;
+  gap: u(16);
+  max-width: 100%;
+  padding: u(10) u(20);
+  border: u(2) solid currentColor;
+  border-radius: u(8);
+
+  .alert-icon {
+    flex: none;
+    font-size: u(56);
+  }
+
+  .alert-text {
+    min-width: 0;
+  }
+
+  p {
+    color: inherit;
+    line-height: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .alert-detail {
+    margin-top: u(6);
+  }
+
+  // Warnings stay bright, even at night
+  &.alert-extreme,
+  &.alert-severe {
+    color: rgb(230, 230, 230);
+  }
 }
