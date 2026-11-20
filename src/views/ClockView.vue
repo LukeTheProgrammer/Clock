@@ -1,59 +1,52 @@
 <template>
+  <!--
+    Three equal columns. The time row (hh | mm | ss) sets the rhythm: its colons
+    sit in the gaps between the columns, and every other row centres one item
+    per column under the hours, minutes and seconds.
+  -->
   <div class="clock-container">
-    <div class="row-1">
-      <div class="row-item">
-        <p class="current-date font-ml">{{ date }}</p>
-      </div>
-    </div>
+    <p class="cell font-l">{{ dayName }}</p>
+    <p class="cell font-l">{{ monthName }}</p>
+    <p class="cell font-l">{{ dayOfMonth }}</p>
 
-    <div class="row-2">
-      <div class="row-item">
-        <p class="current-time font-xl">{{ time }}</p>
-      </div>
-    </div>
+    <p class="cell time font-xl">{{ hours }}</p>
+    <p class="cell time time-colon font-xl">{{ minutes }}</p>
+    <p class="cell time time-colon font-xl">{{ seconds }}</p>
 
-    <div class="row-3">
-      <!--
-        Three columns with equal outer widths, so the middle one is centred exactly
-        like the time above it. The current temp's digits then sit under the
-        minute digits; its degree sign hangs outside the column so it doesn't
-        pull the digits off centre.
-      -->
-      <div class="current-weather">
-        <p class="temp-high font-ml" title="Today's high">
-          <svg class="temp-arrow" viewBox="0 0 10 14" aria-hidden="true">
-            <path d="M5 13V2M1.5 5.5L5 2l3.5 3.5" />
-          </svg>{{ todayHigh }}&deg;
+    <p class="cell temp-high font-ml" title="Today's high">
+      <svg class="temp-arrow" viewBox="0 0 10 14" aria-hidden="true">
+        <path d="M5 13V2M1.5 5.5L5 2l3.5 3.5" />
+      </svg>{{ todayHigh }}&deg;
+    </p>
+    <p class="cell current-temp font-xl">
+      {{ Math.round(temp) }}<span class="current-temp-degree">&deg;</span>
+    </p>
+    <p class="cell temp-low font-ml" title="Today's low">
+      <svg class="temp-arrow" viewBox="0 0 10 14" aria-hidden="true">
+        <path d="M5 1v11M1.5 8.5L5 12l3.5-3.5" />
+      </svg>{{ todayLow }}&deg;
+    </p>
+
+    <!--
+      With 3 days each day takes one column of the grid. Any other count
+      spreads the days evenly across the full width instead.
+    -->
+    <div class="forecast-container" :class="{ 'forecast-on-grid': forecastDays === 3 }">
+      <div v-for="day in forecastBar" :key="`forecast_day_${day.date}`" class="forecast-day">
+        <p class="forecast-date font-s">
+          {{ day.date }}
         </p>
-        <p class="current-temp font-xl">
-          {{ Math.round(temp) }}<span class="current-temp-degree">&deg;</span>
-        </p>
-        <p class="temp-low font-ml" title="Today's low">
-          <svg class="temp-arrow" viewBox="0 0 10 14" aria-hidden="true">
-            <path d="M5 1v11M1.5 8.5L5 12l3.5-3.5" />
-          </svg>{{ todayLow }}&deg;
-        </p>
+        <div class="forecast-temps">
+          <span class="temp-high font-m"> {{ Math.round(day.high) }}&deg; </span>
+          <span class="temp-pipe">|</span>
+          <span class="temp-low font-m"> {{ Math.round(day.low) }}&deg; </span>
+        </div>
       </div>
     </div>
 
     <div v-if="debug" class="debug-readout">
       <p class="font-m">h: {{ screenHeight }} px</p>
       <p class="font-m">w: {{ screenWidth }} px</p>
-    </div>
-
-    <div class="row-4">
-      <div class="forecast-container">
-        <div v-for="day in forecastBar" :key="`forecast_day_${day.date}`" class="forecast-day">
-          <p class="forecast-date font-s">
-            {{ day.date }}
-          </p>
-          <div class="forecast-temps">
-            <span class="temp-high font-m"> {{ Math.round(day.high) }}&deg; </span>
-            <span class="temp-pipe">|</span>
-            <span class="temp-low font-m"> {{ Math.round(day.low) }}&deg; </span>
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 </template>
@@ -68,8 +61,14 @@ export default {
   name: 'ClockPage',
   data() {
     return {
-      time: '',
-      date: '',
+      dayName: '',
+      monthName: '',
+      dayOfMonth: '',
+      hours: '',
+      minutes: '',
+      seconds: '',
+      // How many days the forecast row shows (3 lines up with the clock's columns)
+      forecastDays: 3,
       temp: 0,
       weather: {},
       forecast: {},
@@ -101,7 +100,7 @@ export default {
           continue
         }
 
-        if (days?.length > 3) {
+        if (days.length >= this.forecastDays) {
           break
         }
 
@@ -148,8 +147,12 @@ export default {
 
     updateTime() {
       const now = new Date()
-      this.date = format(now, 'dddd MMMM DD')
-      this.time = format(now, 'hh:mm:ss')
+      this.dayName = format(now, 'ddd')
+      this.monthName = format(now, 'MMM')
+      this.dayOfMonth = format(now, 'DD')
+      this.hours = format(now, 'hh')
+      this.minutes = format(now, 'mm')
+      this.seconds = format(now, 'ss')
     },
 
     getWeather() {

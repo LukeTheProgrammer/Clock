@@ -46,24 +46,24 @@ p {
 }
 
 .font-s {
-  font-size: u(24);
+  font-size: u(30);
 }
 
 .font-m {
-  font-size: u(28);
+  font-size: u(36);
 }
 
 .font-ml {
-  font-size: u(56);
+  font-size: u(64);
 }
 
 .font-l {
-  font-size: u(96);
+  font-size: u(84);
 }
 
 .font-xl {
   letter-spacing: 0.05em;
-  font-size: u(160);
+  font-size: u(176);
 }
 
 // Clock Page
@@ -78,122 +78,93 @@ p {
 }
 
 .clock-container {
+  // Width of the gaps between columns: wide enough for the time's
+  // colons, narrow enough to leave the digits room to grow.
+  --gutter: #{u(64)};
+
   height: 98%;
   width: 98%;
   margin: u(10) auto;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  // align-items: flex-start;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(4, auto);
+  column-gap: var(--gutter);
+  align-content: space-between;
+  align-items: center;
 
-  .row-1,
-  .row-2,
-  .row-3 {
+  .cell {
+    position: relative;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  // Letter-spacing leaves a gap after the last digit, which nudges centred
+  // text left. Indenting by the same amount balances it.
+  .time,
+  .current-temp {
+    text-indent: 0.05em;
+  }
+
+  // The colon before the minutes and seconds, centred in the gap to the left
+  // (flex centring keeps it centred even though the glyph is wider than the gap)
+  .time-colon::before {
+    content: ':';
+    position: absolute;
+    right: 100%;
+    width: var(--gutter);
     display: flex;
-    width: 100%;
-
-    .row-item {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 100%;
-      text-align: center;
-    }
-  }
-
-  .row-1 {
-    justify-content: flex-start;
-  }
-
-  .row-2 {
     justify-content: center;
+    letter-spacing: 0;
+    text-indent: 0;
   }
 
-  .row-3 {
-    justify-content: flex-start;
+  .current-temp {
+    // A touch smaller than the time, so its degree sign clears the low temp
+    font-size: u(160);
 
-    .current-weather {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-      align-items: center;
-      width: 100%;
-
-      .temp-high {
-        justify-self: end;
-        padding-right: u(28);
-      }
-
-      .current-temp {
-        position: relative;
-
-        .current-temp-degree {
-          position: absolute;
-          left: 100%;
-          top: 0;
-        }
-      }
-
-      .temp-low {
-        justify-self: start;
-        // Clear the current temp's degree sign (about one 160px character), which hangs into this column
-        padding-left: u(124);
-      }
-
-      .temp-arrow {
-        width: 0.5em;
-        height: 0.7em;
-        margin-right: 0.1em;
-        vertical-align: baseline;
-        fill: none;
-        stroke: currentColor;
-        stroke-width: 1.4;
-        stroke-linecap: round;
-        stroke-linejoin: round;
-      }
+    // The degree sign hangs into the gap so the digits stay centred under the minutes
+    .current-temp-degree {
+      position: absolute;
+      top: 0;
     }
   }
 
-  .row-4 {
-    .forecast-container {
+  .temp-arrow {
+    width: 0.5em;
+    height: 0.7em;
+    margin-right: 0.1em;
+    vertical-align: baseline;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .forecast-container {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: space-between;
+
+    // One day per clock column
+    &.forecast-on-grid {
+      display: contents;
+    }
+
+    .forecast-day {
       display: flex;
-      justify-content: space-between;
-      align-content: flex-end;
-      height: 100%;
+      flex-direction: column;
+      align-items: center;
       width: 100%;
-      text-align: center;
 
-      .forecast-day {
+      .forecast-temps {
         display: flex;
-        flex-direction: column;
-        justify-content: center;
+        justify-content: space-between;
         align-items: center;
-        text-align: center;
-        width: 100%;
+        width: 70%;
 
-        .forecast-date {
-          text-align: center;
-          width: 100%;
-        }
-
-        .forecast-temps {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          width: 70%;
-
-          .temp-high {
-            text-align: left;
-          }
-
-          .temp-pipe {
-            text-align: center;
-            font-weight: bold;
-          }
-
-          .temp-low {
-            text-align: right;
-          }
+        .temp-pipe {
+          font-weight: bold;
         }
       }
     }
