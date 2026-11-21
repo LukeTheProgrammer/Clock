@@ -3,18 +3,22 @@
     Three equal columns. The time row (hh | mm | ss) sets the rhythm: its colons
     sit in the gaps between the columns, and every other row centres one item
     per column under the hours, minutes and seconds.
+
+    r1-r3 / c1-c3 name each cell's row and column. On wide screens the forecast
+    moves into a sidebar on the left, and those classes place the clock cells
+    to its right (see the wide-screen section of clock.scss).
   -->
   <div class="clock-container">
-    <p class="cell date-dow font-l">{{ dayName }}</p>
-    <p class="cell font-l">{{ monthName }}</p>
-    <p class="cell date-day font-l">{{ dayOfMonth }}</p>
+    <p class="cell r1 c1 date-dow font-l">{{ dayName }}</p>
+    <p class="cell r1 c2 font-l">{{ monthName }}</p>
+    <p class="cell r1 c3 date-day font-l">{{ dayOfMonth }}</p>
 
-    <p class="cell time font-xl">{{ hours }}</p>
-    <p class="cell time time-colon font-xl">{{ minutes }}</p>
-    <p class="cell time time-colon font-xl">{{ seconds }}</p>
+    <p class="cell r2 c1 time font-xl">{{ hours }}</p>
+    <p class="cell r2 c2 time time-colon font-xl">{{ minutes }}</p>
+    <p class="cell r2 c3 time time-colon font-xl">{{ seconds }}</p>
 
     <!-- Left: today's high and low, spread over the height of the current temp -->
-    <div class="cell temp-range">
+    <div class="cell r3 c1 temp-range">
       <p class="temp-high font-ml" title="Today's high">
         <svg class="temp-arrow" viewBox="0 0 10 14" aria-hidden="true">
           <path d="M5 13V2M1.5 5.5L5 2l3.5 3.5" />
@@ -27,13 +31,13 @@
       </p>
     </div>
 
-    <p class="cell current-temp font-xl">
+    <p class="cell r3 c2 current-temp font-xl">
       <!-- The degree sign hangs into the gap so the digits stay under the minutes -->
       {{ Math.round(currentTemp) }}<span class="current-temp-degree">&deg;</span>
     </p>
 
     <!-- Right: current conditions above the rain chance for the rest of today -->
-    <div class="cell current-conditions">
+    <div class="cell r3 c3 current-conditions">
       <WeatherIcon
         class="current-icon"
         :kind="conditionKind(currentPeriod?.shortForecast, currentPeriod?.isDaytime ?? true)"
@@ -126,6 +130,11 @@ export default {
       seconds: '',
       // How many days the forecast row shows (3 lines up with the clock's columns)
       forecastDays: 3,
+      // On wide screens the forecast moves into a sidebar (see clock.scss),
+      // which has room for more days. Keep this query in sync with the SCSS.
+      sidebarForecastDays: 4,
+      sidebarQuery: window.matchMedia('(min-aspect-ratio: 16/9) and (min-width: 1000px)'),
+      isSidebarLayout: false,
       now: Date.now(),
       temp: 0,
       weather: {},
@@ -162,7 +171,7 @@ export default {
           continue
         }
 
-        if (days.length >= this.forecastDays) {
+        if (days.length >= this.visibleForecastDays) {
           break
         }
 
@@ -189,6 +198,10 @@ export default {
       )
     },
 
+    visibleForecastDays() {
+      return this.isSidebarLayout ? this.sidebarForecastDays : this.forecastDays
+    },
+
     // Highest chance of rain from now until midnight
     todayRainChance() {
       const today = format(new Date(this.now), 'YYYY-MM-DD')
@@ -211,6 +224,8 @@ export default {
     this.getAlerts()
     // this.testWeatherData()
     window.addEventListener('resize', this.updateScreenSize)
+    this.isSidebarLayout = this.sidebarQuery.matches
+    this.sidebarQuery.addEventListener('change', this.updateLayout)
   },
 
   unmounted() {
@@ -218,6 +233,7 @@ export default {
     clearInterval(this.weatherId)
     clearInterval(this.alertsId)
     window.removeEventListener('resize', this.updateScreenSize)
+    this.sidebarQuery.removeEventListener('change', this.updateLayout)
   },
 
   methods: {
@@ -274,6 +290,10 @@ export default {
           }
         })
         .sort((a, b) => SEVERITY_ORDER.indexOf(a.severity) - SEVERITY_ORDER.indexOf(b.severity))
+    },
+
+    updateLayout(event) {
+      this.isSidebarLayout = event.matches
     },
 
     updateScreenSize() {

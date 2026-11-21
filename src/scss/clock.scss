@@ -296,3 +296,111 @@ p {
     color: rgb(230, 230, 230);
   }
 }
+
+// Wide screens: forecast sidebar
+//
+// When the screen is much wider than the 5:3 bedside layout (16:9 or wider,
+// and not tiny), the forecast moves into a column on the left and the clock
+// shifts right, using the space that would otherwise sit empty on each side.
+// The 800x480 bedside screen (5:3) never matches this, so it's unaffected.
+// ClockView.vue uses the same media query to show 4 forecast days here.
+@media (min-aspect-ratio: 16/9) and (min-width: 1000px) {
+  // Design canvas for this layout: 960x420 design pixels. No forecast row
+  // underneath, so it's wider and shorter than the 800x480 one. (The grid is
+  // 920 wide; the rest is the page margin.)
+  :root {
+    --u: min(100vw / 960, 100vh / 420);
+  }
+
+  .clock-container {
+    grid-template-columns: #{u(200)} repeat(3, #{u(196)});
+    grid-template-rows: repeat(3, auto);
+
+    .c1 {
+      grid-column: 2;
+    }
+    .c2 {
+      grid-column: 3;
+    }
+    .c3 {
+      grid-column: 4;
+    }
+    .r1 {
+      grid-row: 1;
+    }
+    .r2 {
+      grid-row: 2;
+    }
+    .r3 {
+      grid-row: 3;
+    }
+
+    // The sidebar spans the full height, days spread evenly down it
+    .forecast-container,
+    .forecast-container.forecast-on-grid {
+      grid-column: 1;
+      grid-row: 1 / -1;
+      align-self: stretch;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      padding-right: u(24);
+      border-right: u(1) solid rgb(60, 60, 60);
+    }
+
+    .forecast-container .forecast-day {
+      white-space: nowrap;
+
+      // Two columns meeting in the middle: day, icon and high right-aligned
+      // on the left; date, rain chance and low left-aligned on the right
+      .forecast-date,
+      .forecast-conditions,
+      .forecast-temps {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        column-gap: u(14);
+        align-items: center;
+        width: 100%;
+
+        > :first-child {
+          justify-self: end;
+        }
+
+        > :last-child {
+          justify-self: start;
+        }
+      }
+
+      .temp-pipe {
+        display: none;
+      }
+
+      .forecast-conditions {
+        height: u(22);
+      }
+    }
+  }
+
+  // An alert takes over the sidebar instead of the forecast row
+  .alert-banner {
+    grid-column: 1;
+    grid-row: 1 / -1;
+    justify-self: stretch;
+    padding: u(16) u(10);
+    flex-direction: column;
+    text-align: center;
+
+    .alert-event {
+      font-size: u(20);
+    }
+
+    .alert-detail {
+      font-size: u(18);
+    }
+
+    p {
+      white-space: normal;
+      overflow: visible;
+    }
+  }
+}
