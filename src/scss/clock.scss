@@ -5,13 +5,12 @@ $color_gray: rgb(150, 150, 150);
 
 // Responsive sizing
 //
-// The layout was designed for the 800x480 bedside screen. `--u` is one
-// "design pixel": exactly 1px at 800x480, and it scales up uniformly on
-// bigger screens, limited by whichever axis runs out first (100vw / 800 or
-// 100vh / 480). Size things with u(<px at 800x480>) so the bedside layout
-// stays pixel-identical while a desk monitor gets the same layout, just bigger.
+// `--u` is one "design pixel". The layout is drawn on a 960x420 canvas (the
+// forecast sidebar on the left, the clock on the right), and `--u` scales it
+// up or down uniformly, limited by whichever axis runs out first. Size things
+// with u(<design px>).
 :root {
-  --u: min(100vw / 800, 100vh / 480);
+  --u: min(100vw / 960, 100vh / 420);
 }
 
 @function u($px) {
@@ -77,6 +76,9 @@ p {
   overflow: hidden;
 }
 
+// The forecast sidebar sits in the first column; the clock takes the three
+// columns to its right. The clock's rows (date, time, temps) sit in rows 2, 4
+// and 6, and the 1fr rows around them share the leftover height evenly.
 .clock-container {
   // Width of the gaps between columns: wide enough for the time's
   // colons, narrow enough to leave the digits room to grow.
@@ -90,14 +92,30 @@ p {
   width: 98%;
   margin: u(10) auto;
   display: grid;
-  // Columns just wider than two time digits, centred as a block so the
-  // colons sit close to the digits on any screen
-  grid-template-columns: repeat(3, #{u(196)});
+  grid-template-columns: #{u(200)} repeat(3, #{u(196)});
   justify-content: center;
-  grid-template-rows: repeat(4, auto);
+  grid-template-rows: 1fr auto 1fr auto 1fr auto 1fr;
   column-gap: var(--gutter);
-  align-content: space-between;
   align-items: center;
+
+  .c1 {
+    grid-column: 2;
+  }
+  .c2 {
+    grid-column: 3;
+  }
+  .c3 {
+    grid-column: 4;
+  }
+  .r1 {
+    grid-row: 2;
+  }
+  .r2 {
+    grid-row: 4;
+  }
+  .r3 {
+    grid-row: 6;
+  }
 
   .cell {
     position: relative;
@@ -178,29 +196,40 @@ p {
     stroke-linejoin: round;
   }
 
-  // An arrow placed after its number (the forecast low)
-  .temp-arrow-after {
-    margin-right: 0;
-    margin-left: 0.1em;
-  }
-
+  // Forecast sidebar: spans the full height, days spread evenly down it
   .forecast-container {
-    grid-column: 1 / -1;
+    grid-column: 1;
+    grid-row: 1 / -1;
+    align-self: stretch;
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    justify-content: space-around;
+    padding-right: u(24);
+    border-right: u(1) solid rgb(60, 60, 60);
 
-    // One day per clock column
-    &.forecast-on-grid {
-      display: contents;
-    }
-
+    // Each day is two columns meeting in the middle, three lines deep:
+    //   Mon | 10/14
+    //  ↑61° | icon
+    //  ↓42° | rain%
+    // The left column is right-aligned, the right column left-aligned.
     .forecast-day {
-      display: flex;
-      flex-direction: column;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: u(14);
+      row-gap: u(10);
       align-items: center;
-      width: 100%;
+      white-space: nowrap;
+      letter-spacing: 0.1em;
+      line-height: 0.8;
 
-      // Forecast text is 75% of the shared small/medium sizes
+      > :nth-child(odd) {
+        justify-self: end;
+      }
+
+      > :nth-child(even) {
+        justify-self: start;
+      }
+
       .font-s {
         font-size: u(20);
       }
@@ -209,40 +238,19 @@ p {
         font-size: u(22);
       }
 
-      // Date, conditions and temps all span the same width with their two
-      // parts pushed to the edges, so the left and right items line up
+      // The day and date line is a little smaller than the rest
+      .forecast-dow,
       .forecast-date {
-        display: flex;
-        justify-content: space-between;
-        width: 70%;
+        font-size: u(17);
       }
 
-      .forecast-conditions {
-        display: flex;
-        align-items: center;
-        // Same width as the temps line below, so the icon sits over the high
-        // and the rain chance over the low
-        justify-content: space-between;
-        width: 70%;
-        height: u(22);
-        margin: u(5) 0;
-        line-height: 0.8;
-        letter-spacing: 0;
-
-        .forecast-rain {
-          letter-spacing: 0.05em;
-        }
+      // Centre the icon under the "/" of the date (the third character)
+      .forecast-icon {
+        margin-left: u(13.65);
       }
 
-      .forecast-temps {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        width: 70%;
-
-        .temp-pipe {
-          font-weight: bold;
-        }
+      .forecast-rain {
+        letter-spacing: 0.05em;
       }
     }
   }
@@ -257,150 +265,43 @@ p {
   background-color: #000;
 }
 
-// Weather alert banner, in place of the forecast row
+// Weather alert: takes over the sidebar in place of the forecast
 .alert-banner {
-  grid-column: 1 / -1;
-  justify-self: center;
+  grid-column: 1;
+  grid-row: 1 / -1;
+  justify-self: stretch;
   display: flex;
+  flex-direction: column;
   align-items: center;
   gap: u(16);
-  max-width: 100%;
-  padding: u(10) u(20);
+  margin-right: u(24);
+  padding: u(16) u(10);
   border: u(2) solid currentColor;
   border-radius: u(8);
+  text-align: center;
 
   .alert-icon {
     flex: none;
     font-size: u(56);
   }
 
-  .alert-text {
-    min-width: 0;
-  }
-
   p {
     color: inherit;
     line-height: 1;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  }
+
+  .alert-event {
+    font-size: u(20);
   }
 
   .alert-detail {
     margin-top: u(6);
+    font-size: u(18);
   }
 
   // Warnings are brighter than the rest of the text
   &.alert-extreme,
   &.alert-severe {
     color: rgb(230, 230, 230);
-  }
-}
-
-// Wide screens: forecast sidebar
-//
-// When the screen is much wider than the 5:3 bedside layout (16:9 or wider,
-// and not tiny), the forecast moves into a column on the left and the clock
-// shifts right, using the space that would otherwise sit empty on each side.
-// The 800x480 bedside screen (5:3) never matches this, so it's unaffected.
-// ClockView.vue uses the same media query to show 4 forecast days here.
-@media (min-aspect-ratio: 16/9) and (min-width: 1000px) {
-  // Design canvas for this layout: 960x420 design pixels. No forecast row
-  // underneath, so it's wider and shorter than the 800x480 one. (The grid is
-  // 920 wide; the rest is the page margin.)
-  :root {
-    --u: min(100vw / 960, 100vh / 420);
-  }
-
-  .clock-container {
-    grid-template-columns: #{u(200)} repeat(3, #{u(196)});
-    grid-template-rows: repeat(3, auto);
-
-    .c1 {
-      grid-column: 2;
-    }
-    .c2 {
-      grid-column: 3;
-    }
-    .c3 {
-      grid-column: 4;
-    }
-    .r1 {
-      grid-row: 1;
-    }
-    .r2 {
-      grid-row: 2;
-    }
-    .r3 {
-      grid-row: 3;
-    }
-
-    // The sidebar spans the full height, days spread evenly down it
-    .forecast-container,
-    .forecast-container.forecast-on-grid {
-      grid-column: 1;
-      grid-row: 1 / -1;
-      align-self: stretch;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-around;
-      padding-right: u(24);
-      border-right: u(1) solid rgb(60, 60, 60);
-    }
-
-    .forecast-container .forecast-day {
-      white-space: nowrap;
-
-      // Two columns meeting in the middle: day, icon and high right-aligned
-      // on the left; date, rain chance and low left-aligned on the right
-      .forecast-date,
-      .forecast-conditions,
-      .forecast-temps {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        column-gap: u(14);
-        align-items: center;
-        width: 100%;
-
-        > :first-child {
-          justify-self: end;
-        }
-
-        > :last-child {
-          justify-self: start;
-        }
-      }
-
-      .temp-pipe {
-        display: none;
-      }
-
-      .forecast-conditions {
-        height: u(22);
-      }
-    }
-  }
-
-  // An alert takes over the sidebar instead of the forecast row
-  .alert-banner {
-    grid-column: 1;
-    grid-row: 1 / -1;
-    justify-self: stretch;
-    padding: u(16) u(10);
-    flex-direction: column;
-    text-align: center;
-
-    .alert-event {
-      font-size: u(20);
-    }
-
-    .alert-detail {
-      font-size: u(18);
-    }
-
-    p {
-      white-space: normal;
-      overflow: visible;
-    }
   }
 }

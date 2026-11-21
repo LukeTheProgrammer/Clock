@@ -4,9 +4,9 @@
     sit in the gaps between the columns, and every other row centres one item
     per column under the hours, minutes and seconds.
 
-    r1-r3 / c1-c3 name each cell's row and column. On wide screens the forecast
-    moves into a sidebar on the left, and those classes place the clock cells
-    to its right (see the wide-screen section of clock.scss).
+    r1-r3 / c1-c3 name each cell's row and column. The forecast sits in a
+    sidebar on the left, and those classes place the clock cells to its right
+    (see clock.scss).
   -->
   <div class="clock-container">
     <p class="cell r1 c1 date-dow font-l">{{ dayName }}</p>
@@ -47,7 +47,7 @@
       </p>
     </div>
 
-    <!-- An active weather alert takes over the forecast row -->
+    <!-- An active weather alert takes over the forecast sidebar -->
     <div v-if="topAlert" class="alert-banner" :class="`alert-${topAlert.severity.toLowerCase()}`">
       <WeatherIcon kind="alert" class="alert-icon" />
       <div class="alert-text">
@@ -59,40 +59,23 @@
       </div>
     </div>
 
-    <!--
-      With 3 days each day takes one column of the grid. Any other count
-      spreads the days evenly across the full width instead.
-    -->
-    <div v-else class="forecast-container" :class="{ 'forecast-on-grid': forecastDays === 3 }">
+    <!-- Forecast sidebar: two columns per day (see clock.scss) -->
+    <div v-else class="forecast-container">
       <div v-for="day in forecastBar" :key="`forecast_day_${day.date}`" class="forecast-day">
-        <p class="forecast-date font-s">
-          <span>{{ day.dayName }}</span>
-          <span>{{ day.monthDay }}</span>
-        </p>
-        <p class="forecast-conditions font-m" :title="day.shortForecast">
-          <WeatherIcon :kind="day.kind" />
-          <span class="forecast-rain font-s">
-            <WeatherIcon kind="drop" />{{ day.rainChance }}%
-          </span>
-        </p>
-        <div class="forecast-temps">
-          <!-- Arrows on the outside, numbers on the inside: ↑61° | 42°↓ -->
-          <span class="temp-high font-m">
-            <svg class="temp-arrow" viewBox="0 0 10 14" aria-hidden="true">
-              <path d="M5 13V2M1.5 5.5L5 2l3.5 3.5" /></svg
-            >{{ Math.round(day.high) }}&deg;
-          </span>
-          <span class="temp-pipe">|</span>
-          <span class="temp-low font-m">
-            {{ Math.round(day.low) }}&deg;<svg
-              class="temp-arrow temp-arrow-after"
-              viewBox="0 0 10 14"
-              aria-hidden="true"
-            >
-              <path d="M5 1v11M1.5 8.5L5 12l3.5-3.5" />
-            </svg>
-          </span>
-        </div>
+        <span class="forecast-dow">{{ day.dayName }}</span>
+        <span class="forecast-date">{{ day.monthDay }}</span>
+        <span class="temp-high font-m">
+          <svg class="temp-arrow" viewBox="0 0 10 14" aria-hidden="true">
+            <path d="M5 13V2M1.5 5.5L5 2l3.5 3.5" /></svg
+          >{{ Math.round(day.high) }}&deg;
+        </span>
+        <WeatherIcon class="forecast-icon font-m" :kind="day.kind" :title="day.shortForecast" />
+        <span class="temp-low font-m">
+          <svg class="temp-arrow" viewBox="0 0 10 14" aria-hidden="true">
+            <path d="M5 1v11M1.5 8.5L5 12l3.5-3.5" /></svg
+          >{{ Math.round(day.low) }}&deg;
+        </span>
+        <span class="forecast-rain font-s"><WeatherIcon kind="drop" />{{ day.rainChance }}%</span>
       </div>
     </div>
 
@@ -128,13 +111,8 @@ export default {
       hours: '',
       minutes: '',
       seconds: '',
-      // How many days the forecast row shows (3 lines up with the clock's columns)
-      forecastDays: 3,
-      // On wide screens the forecast moves into a sidebar (see clock.scss),
-      // which has room for more days. Keep this query in sync with the SCSS.
-      sidebarForecastDays: 4,
-      sidebarQuery: window.matchMedia('(min-aspect-ratio: 16/9) and (min-width: 1000px)'),
-      isSidebarLayout: false,
+      // How many days the forecast sidebar shows
+      forecastDays: 4,
       now: Date.now(),
       temp: 0,
       weather: {},
@@ -171,7 +149,7 @@ export default {
           continue
         }
 
-        if (days.length >= this.visibleForecastDays) {
+        if (days.length >= this.forecastDays) {
           break
         }
 
@@ -198,10 +176,6 @@ export default {
       )
     },
 
-    visibleForecastDays() {
-      return this.isSidebarLayout ? this.sidebarForecastDays : this.forecastDays
-    },
-
     // Highest chance of rain from now until midnight
     todayRainChance() {
       const today = format(new Date(this.now), 'YYYY-MM-DD')
@@ -224,8 +198,6 @@ export default {
     this.getAlerts()
     // this.testWeatherData()
     window.addEventListener('resize', this.updateScreenSize)
-    this.isSidebarLayout = this.sidebarQuery.matches
-    this.sidebarQuery.addEventListener('change', this.updateLayout)
   },
 
   unmounted() {
@@ -233,7 +205,6 @@ export default {
     clearInterval(this.weatherId)
     clearInterval(this.alertsId)
     window.removeEventListener('resize', this.updateScreenSize)
-    this.sidebarQuery.removeEventListener('change', this.updateLayout)
   },
 
   methods: {
@@ -290,10 +261,6 @@ export default {
           }
         })
         .sort((a, b) => SEVERITY_ORDER.indexOf(a.severity) - SEVERITY_ORDER.indexOf(b.severity))
-    },
-
-    updateLayout(event) {
-      this.isSidebarLayout = event.matches
     },
 
     updateScreenSize() {
