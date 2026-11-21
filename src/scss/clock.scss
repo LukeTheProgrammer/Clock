@@ -178,6 +178,12 @@ p {
     stroke-linejoin: round;
   }
 
+  // An arrow placed after its number (the forecast low)
+  .temp-arrow-after {
+    margin-right: 0;
+    margin-left: 0.1em;
+  }
+
   .forecast-container {
     grid-column: 1 / -1;
     display: flex;

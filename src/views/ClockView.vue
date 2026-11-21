@@ -72,9 +72,22 @@
           </span>
         </p>
         <div class="forecast-temps">
-          <span class="temp-high font-m"> {{ Math.round(day.high) }}&deg; </span>
+          <!-- Arrows on the outside, numbers on the inside: ↑61° | 42°↓ -->
+          <span class="temp-high font-m">
+            <svg class="temp-arrow" viewBox="0 0 10 14" aria-hidden="true">
+              <path d="M5 13V2M1.5 5.5L5 2l3.5 3.5" /></svg
+            >{{ Math.round(day.high) }}&deg;
+          </span>
           <span class="temp-pipe">|</span>
-          <span class="temp-low font-m"> {{ Math.round(day.low) }}&deg; </span>
+          <span class="temp-low font-m">
+            {{ Math.round(day.low) }}&deg;<svg
+              class="temp-arrow temp-arrow-after"
+              viewBox="0 0 10 14"
+              aria-hidden="true"
+            >
+              <path d="M5 1v11M1.5 8.5L5 12l3.5-3.5" />
+            </svg>
+          </span>
         </div>
       </div>
     </div>
