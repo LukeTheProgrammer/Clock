@@ -81,11 +81,10 @@ p {
   // Width of the gaps between columns: wide enough for the time's
   // colons, narrow enough to leave the digits room to grow.
   --gutter: #{u(44)};
-  // Text colour; dimmed at night
+  // Text colour
   --fg: #{$color_gray};
 
   color: var(--fg);
-  transition: color 2s;
 
   height: 98%;
   width: 98%;
@@ -252,11 +251,6 @@ p {
   background-color: #000;
 }
 
-// Night dimming (between sunset and sunrise)
-.clock-container.night {
-  --fg: rgb(70, 70, 70);
-}
-
 // Weather alert banner, in place of the forecast row
 .alert-banner {
   grid-column: 1 / -1;
@@ -290,7 +284,7 @@ p {
     margin-top: u(6);
   }
 
-  // Warnings stay bright, even at night
+  // Warnings are brighter than the rest of the text
   &.alert-extreme,
   &.alert-severe {
     color: rgb(230, 230, 230);

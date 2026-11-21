@@ -4,7 +4,7 @@
     sit in the gaps between the columns, and every other row centres one item
     per column under the hours, minutes and seconds.
   -->
-  <div class="clock-container" :class="{ night: isNight }">
+  <div class="clock-container">
     <p class="cell date-dow font-l">{{ dayName }}</p>
     <p class="cell font-l">{{ monthName }}</p>
     <p class="cell date-day font-l">{{ dayOfMonth }}</p>
@@ -82,9 +82,6 @@
     <div v-if="debug" class="debug-readout">
       <p class="font-m">h: {{ screenHeight }} px</p>
       <p class="font-m">w: {{ screenWidth }} px</p>
-      <p v-if="sun" class="font-m">
-        sun: {{ formatTime(sun.sunrise) }}-{{ formatTime(sun.sunset) }}
-      </p>
     </div>
   </div>
 </template>
@@ -96,9 +93,8 @@ import example_weather from '../example-data/weather.json'
 import { parse, format, sameDay } from '@formkit/tempo'
 import WeatherIcon from '@/components/WeatherIcon.vue'
 import { conditionKind } from '@/js/conditions.js'
-import { sunTimes } from '@/js/sun.js'
 
-// Where the clock lives (used for the forecast, alerts and sunrise/sunset)
+// Where the clock lives (used for the forecast and alerts)
 const LATITUDE = 38.9124
 const LONGITUDE = -94.6267
 
@@ -124,8 +120,6 @@ export default {
       // Every hourly period from weather.gov, for conditions and rain chance
       hourly: [],
       alerts: [],
-      // ?dim=on / ?dim=off forces night dimming on or off (for testing)
-      dimOverride: new URLSearchParams(window.location.search).get('dim'),
       // Add ?debug to the URL to show the viewport size readout
       debug: new URLSearchParams(window.location.search).has('debug'),
       screenWidth: window.innerWidth,
@@ -191,18 +185,6 @@ export default {
 
     currentTemp() {
       return this.currentPeriod?.temp ?? this.temp
-    },
-
-    sun() {
-      return sunTimes(new Date(this.now), LATITUDE, LONGITUDE)
-    },
-
-    // Dim the display between sunset and sunrise
-    isNight() {
-      if (this.dimOverride === 'on') return true
-      if (this.dimOverride === 'off') return false
-      if (!this.sun) return false
-      return this.now < this.sun.sunrise.valueOf() || this.now >= this.sun.sunset.valueOf()
     },
 
     topAlert() {
