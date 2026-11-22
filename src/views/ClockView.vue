@@ -47,35 +47,59 @@
       </p>
     </div>
 
-    <!-- An active weather alert takes over the forecast sidebar -->
-    <div v-if="topAlert" class="alert-banner" :class="`alert-${topAlert.severity.toLowerCase()}`">
-      <WeatherIcon kind="alert" class="alert-icon" />
-      <div class="alert-text">
-        <p class="alert-event font-m">{{ topAlert.event }}</p>
-        <p class="alert-detail font-s">
-          <span v-if="topAlert.until">until {{ topAlert.until }}</span>
-          <span v-if="alerts.length > 1"> &middot; +{{ alerts.length - 1 }} more</span>
-        </p>
+    <!--
+      Sidebar: the forecast, or an active weather alert in its place. On wide
+      screens it's a column on the left; on the small screen it's a drawer
+      that the button in the top-left corner opens (see clock.scss).
+    -->
+    <button
+      type="button"
+      class="drawer-button"
+      :aria-label="topAlert ? 'Show weather alert' : 'Show forecast'"
+      @click="drawerOpen = true"
+    >
+      <WeatherIcon :kind="topAlert ? 'alert' : forecastBar[0]?.kind ?? 'cloud'" />
+    </button>
+    <button
+      v-if="drawerOpen"
+      type="button"
+      class="drawer-scrim"
+      aria-label="Close"
+      @click="drawerOpen = false"
+    ></button>
+    <div class="sidebar" :class="{ open: drawerOpen }">
+      <button type="button" class="drawer-close" aria-label="Close" @click="drawerOpen = false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+      </button>
+      <!-- An active weather alert takes the forecast's place -->
+      <div v-if="topAlert" class="alert-banner" :class="`alert-${topAlert.severity.toLowerCase()}`">
+        <WeatherIcon kind="alert" class="alert-icon" />
+        <div class="alert-text">
+          <p class="alert-event font-m">{{ topAlert.event }}</p>
+          <p class="alert-detail font-s">
+            <span v-if="topAlert.until">until {{ topAlert.until }}</span>
+            <span v-if="alerts.length > 1"> &middot; +{{ alerts.length - 1 }} more</span>
+          </p>
+        </div>
       </div>
-    </div>
 
-    <!-- Forecast sidebar: two columns per day (see clock.scss) -->
-    <div v-else class="forecast-container">
-      <div v-for="day in forecastBar" :key="`forecast_day_${day.date}`" class="forecast-day">
-        <span class="forecast-dow">{{ day.dayName }}</span>
-        <span class="forecast-date">{{ day.monthDay }}</span>
-        <span class="temp-high font-m">
-          <svg class="temp-arrow" viewBox="0 0 10 14" aria-hidden="true">
-            <path d="M5 13V2M1.5 5.5L5 2l3.5 3.5" /></svg
-          >{{ Math.round(day.high) }}&deg;
-        </span>
-        <WeatherIcon class="forecast-icon font-m" :kind="day.kind" :title="day.shortForecast" />
-        <span class="temp-low font-m">
-          <svg class="temp-arrow" viewBox="0 0 10 14" aria-hidden="true">
-            <path d="M5 1v11M1.5 8.5L5 12l3.5-3.5" /></svg
-          >{{ Math.round(day.low) }}&deg;
-        </span>
-        <span class="forecast-rain font-s"><WeatherIcon kind="drop" />{{ day.rainChance }}%</span>
+      <div v-else class="forecast-container">
+        <div v-for="day in forecastBar" :key="`forecast_day_${day.date}`" class="forecast-day">
+          <span class="forecast-dow">{{ day.dayName }}</span>
+          <span class="forecast-date">{{ day.monthDay }}</span>
+          <span class="temp-high font-m">
+            <svg class="temp-arrow" viewBox="0 0 10 14" aria-hidden="true">
+              <path d="M5 13V2M1.5 5.5L5 2l3.5 3.5" /></svg
+            >{{ Math.round(day.high) }}&deg;
+          </span>
+          <WeatherIcon class="forecast-icon font-m" :kind="day.kind" :title="day.shortForecast" />
+          <span class="temp-low font-m">
+            <svg class="temp-arrow" viewBox="0 0 10 14" aria-hidden="true">
+              <path d="M5 1v11M1.5 8.5L5 12l3.5-3.5" /></svg
+            >{{ Math.round(day.low) }}&deg;
+          </span>
+          <span class="forecast-rain font-s"><WeatherIcon kind="drop" />{{ day.rainChance }}%</span>
+        </div>
       </div>
     </div>
 
@@ -113,6 +137,8 @@ export default {
       seconds: '',
       // How many days the forecast sidebar shows
       forecastDays: 4,
+      // Small screen only: whether the forecast drawer is open
+      drawerOpen: false,
       now: Date.now(),
       temp: 0,
       weather: {},

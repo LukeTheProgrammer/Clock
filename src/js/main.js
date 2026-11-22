@@ -7,6 +7,7 @@ import { Popover } from 'bootstrap'
 import { createApp } from 'vue'
 import App from '../App.vue'
 import router from '../router'
+import { startAutoReload } from './autoReload.js'
 
 // Create an example popover
 document.querySelectorAll('[data-bs-toggle="popover"]').forEach((popover) => {
@@ -18,3 +19,5 @@ const app = createApp(App)
 app.use(router)
 
 app.mount('#app')
+
+startAutoReload()

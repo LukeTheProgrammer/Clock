@@ -196,16 +196,21 @@ p {
     stroke-linejoin: round;
   }
 
-  // Forecast sidebar: spans the full height, days spread evenly down it
-  .forecast-container {
+  // Sidebar: the forecast (or an alert), spanning the full height
+  .sidebar {
     grid-column: 1;
     grid-row: 1 / -1;
     align-self: stretch;
+    display: grid;
+    padding-right: u(24);
+    border-right: u(1) solid rgb(60, 60, 60);
+  }
+
+  // Days spread evenly down the sidebar
+  .forecast-container {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
-    padding-right: u(24);
-    border-right: u(1) solid rgb(60, 60, 60);
 
     // Each day is two columns meeting in the middle, three lines deep:
     //   Mon | 10/14
@@ -267,14 +272,11 @@ p {
 
 // Weather alert: takes over the sidebar in place of the forecast
 .alert-banner {
-  grid-column: 1;
-  grid-row: 1 / -1;
-  justify-self: stretch;
+  align-self: center;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: u(16);
-  margin-right: u(24);
   padding: u(16) u(10);
   border: u(2) solid currentColor;
   border-radius: u(8);
@@ -303,5 +305,104 @@ p {
   &.alert-extreme,
   &.alert-severe {
     color: rgb(230, 230, 230);
+  }
+}
+
+// Drawer controls: only used on the small screen (below)
+.drawer-button,
+.drawer-close,
+.drawer-scrim {
+  display: none;
+}
+
+// Small screen (the 800x480 bedside touchscreen, or anything narrower than
+// 16:9): the clock fills the screen with bigger text, and the forecast moves
+// into a drawer that the button in the top-left corner opens.
+@media (max-aspect-ratio: 16/9), (max-width: 999px) {
+  // Design canvas: 800x480 at 110%, so the clock is 10% bigger than the
+  // original bedside layout
+  :root {
+    --u: min(100vw / 727.27, 100vh / 436.36);
+  }
+
+  .clock-container {
+    grid-template-columns: repeat(3, #{u(196)});
+
+    .c1 {
+      grid-column: 1;
+    }
+    .c2 {
+      grid-column: 2;
+    }
+    .c3 {
+      grid-column: 3;
+    }
+  }
+
+  // Touch targets: 44px on the 800x480 screen
+  .drawer-button,
+  .drawer-close {
+    position: fixed;
+    top: u(7.3);
+    left: u(7.3);
+    width: u(40);
+    height: u(40);
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: u(0.9) solid rgb(60, 60, 60);
+    border-radius: u(7.3);
+    color: rgb(110, 110, 110);
+    font-size: u(23.6);
+    cursor: pointer;
+  }
+
+  .drawer-close {
+    // Undo the drawer's 130% scale so it matches the open button
+    --u: min(100vw / 727.27, 100vh / 436.36);
+    position: absolute;
+
+    svg {
+      width: 0.85em;
+      height: 0.85em;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.6;
+      stroke-linecap: round;
+    }
+  }
+
+  .drawer-scrim {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    padding: 0;
+    border: 0;
+    background: rgba(0, 0, 0, 0.6);
+  }
+
+  // The drawer: hidden off the left edge until opened. Its contents are 130%
+  // of the wide-screen sidebar sizes, so --u is scaled up inside it.
+  .clock-container .sidebar {
+    --u: calc(min(100vw / 727.27, 100vh / 436.36) * 1.3 / 1.1);
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    box-sizing: border-box;
+    width: u(230.8);
+    height: 100vh;
+    padding: u(43) u(15.4) u(12.3);
+    background: #000;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+
+    &.open {
+      transform: none;
+    }
   }
 }
